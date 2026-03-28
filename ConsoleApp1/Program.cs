@@ -2,21 +2,25 @@
 using System;
 using System.Collections.Generic;
 
+#region Program & Main
 class Program
 {
     // LISTA (banco de dados em memória)
     public static List<Cliente> clientes = new List<Cliente>();
+    public static List<Produto> produtos = new List<Produto>();
     
-
     static void Main()
     {
-       
+       string loginFuncCorreto = "admin";
+       string senhaFuncCorreta = "1234";
+
         while (true)
         {
             Console.WriteLine("=== SISTEMA DE SUPERMERCADO ===");
             Console.WriteLine("1 - Cadastrar cliente");
             Console.WriteLine("2 - Login");
-            Console.WriteLine("3 - Sair");
+            Console.WriteLine("3 - Sou funcionario");
+            Console.WriteLine("4 - Sair");
             string resposta = Console.ReadLine();
 
             if (resposta == "1")
@@ -46,6 +50,25 @@ class Program
             }
             else if (resposta == "3")
             {
+                Console.WriteLine("Digite o login do funcionário:");
+                string loginFunc = Console.ReadLine();
+                Console.WriteLine("Digite a senha do funcionário:");
+                string senhaFunc = Console.ReadLine();
+
+                if (loginFunc == loginFuncCorreto && senhaFunc == senhaFuncCorreta)
+                {
+                    Console.WriteLine("Login de funcionário realizado com sucesso!");
+                }
+                while (true)
+                {
+                  
+
+
+
+                }
+            }
+            else if (resposta == "4")
+            {
                 Console.WriteLine("Saindo do sistema...");
                 break;
             }
@@ -56,8 +79,8 @@ class Program
 
             Console.WriteLine(); // espaço visual
         }
-     
 
+        #endregion
     }
 
 }
@@ -118,4 +141,32 @@ class Cliente
     #endregion
 }
 
+#region Product class
+class Produto
+{
+    public string Nome;
+    public double Preco;
+    public int Estoque;
 
+    public Produto(string nome, double preco, int estoque)
+    {
+        this.Nome = nome;
+        this.Preco = preco;
+        this.Estoque = estoque;
+    }
+    public static void CadastrarProduto()
+    {
+        Console.WriteLine("Digite o nome do produto:");
+        string nome = Console.ReadLine();
+        Console.WriteLine("Digite o preço do produto:");
+        double preco = double.Parse(Console.ReadLine());
+        Console.WriteLine("Digite a quantidade em estoque:");
+        int estoque = int.Parse(Console.ReadLine());
+        Produto novoproduto = new Produto(nome, preco, estoque);
+
+        Program.produtos.Add(novoproduto);
+
+        Console.WriteLine($"Produto {nome} cadastrado com sucesso!");
+    }
+    #endregion
+}
