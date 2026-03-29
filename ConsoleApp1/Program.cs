@@ -8,11 +8,11 @@ class Program
     // LISTA (banco de dados em memória)
     public static List<Cliente> clientes = new List<Cliente>();
     public static List<Produto> produtos = new List<Produto>();
-    
+
     static void Main()
     {
-       string loginFuncCorreto = "admin";
-       string senhaFuncCorreta = "1234";
+        string loginFuncCorreto = "admin";
+        string senhaFuncCorreta = "1234";
 
         while (true)
         {
@@ -43,7 +43,16 @@ class Program
 
                         string op = Console.ReadLine();
 
-                        if (op == "3")
+                        if (op == "1")
+                        {
+                            Produto.VerProdutos();
+                        }
+                        else if (op == "2")
+                        {
+                            Produto.Comprar();
+
+                        }
+                        else if (op == "3")
                             break;
                     }
                 }
@@ -59,30 +68,49 @@ class Program
                 {
                     Console.WriteLine("Login de funcionário realizado com sucesso!");
                 }
+                else if (loginFunc != loginFuncCorreto || senhaFunc != senhaFuncCorreta)
+                {
+                    Console.WriteLine("Login ou senha incorretos. Acesso negado.");
+                    continue; // volta para o início do loop principal
+                }
                 while (true)
                 {
-                  
+                    Console.WriteLine("1 - Cadastrar produto");
+                    Console.WriteLine("2 - Editar produtos");
+                    Console.WriteLine("3 - Aplicar descontos");
+                    Console.WriteLine("4 - Sair");
+                    string respostaFunc = Console.ReadLine();
 
+                    if (respostaFunc == "1")
+                    {
+                        Produto.CadastrarProduto();
+                    }
+                    else if (respostaFunc == "2")
+                    {
+                        Produto.EditarProduto();
+                    }
+                    else if (respostaFunc == "3")
+                    {
+                        Produto.AplicarDesconto();
+                    }
+                    else if (respostaFunc == "4")
+                    {
+                        Console.WriteLine("Saindo do sistema...");
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Opção inválida. Tente novamente.");
+                    }
 
-
+                    Console.WriteLine(); // espaço visual
                 }
-            }
-            else if (resposta == "4")
-            {
-                Console.WriteLine("Saindo do sistema...");
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Opção inválida. Tente novamente.");
+
+                #endregion
             }
 
-            Console.WriteLine(); // espaço visual
         }
-
-        #endregion
     }
-
 }
 #region Client class
 class Cliente
@@ -135,8 +163,6 @@ class Cliente
 
         Console.WriteLine("Email ou senha incorretos.");
         return null;
-
-      
     }
     #endregion
 }
@@ -168,5 +194,117 @@ class Produto
 
         Console.WriteLine($"Produto {nome} cadastrado com sucesso!");
     }
-    #endregion
+
+    public static void EditarProduto()
+    {
+        Console.WriteLine("Digite o nome do produto que deseja alterar:");
+        string nomebusca = Console.ReadLine();
+
+        bool encontrou = false;
+
+        foreach (var p in Program.produtos)
+        {
+            if (p.Nome == nomebusca)
+            {
+                encontrou = true;
+
+                Console.WriteLine("Digite o novo nome do produto:");
+                p.Nome = Console.ReadLine();
+
+                Console.WriteLine("Digite o novo preço do produto:");
+                p.Preco = double.Parse(Console.ReadLine());
+
+                Console.WriteLine("Digite a nova quantidade em estoque:");
+                p.Estoque = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Produto atualizado com sucesso!");
+
+                break; // para não continuar procurando
+            }
+        }
+
+        if (!encontrou)
+        {
+            Console.WriteLine("Produto não encontrado.");
+        }
+    }
+    public static void VerProdutos()
+    {
+        Console.WriteLine("=== LISTA DE PRODUTOS ===");
+        foreach (var p in Program.produtos)
+        {
+            Console.WriteLine($"Nome: {p.Nome} | Preço: {p.Preco} | Estoque: {p.Estoque}");
+        }
+        if (Program.produtos.Count == 0)
+        {
+            Console.WriteLine("Nenhum produto cadastrado.");
+            return;
+        }
+    }
+    public static void Comprar()
+    {
+        int i = 1;
+
+        foreach (var p in Program.produtos)
+        {
+            Console.WriteLine($"{i} - {p.Nome} | R${p.Preco} | Estoque: {p.Estoque}");
+            i++;
+        }
+
+        int escolha = int.Parse(Console.ReadLine());
+
+        if (escolha < 1 || escolha > Program.produtos.Count)
+        {
+            Console.WriteLine("Opção inválida.");
+            return;
+        }
+
+        Produto selecionado = Program.produtos[escolha - 1];
+
+        Console.WriteLine($"Você escolheu: {selecionado.Nome}");
+
+        Console.WriteLine("Digite a quantidade que deseja comprar:");
+        int quantidade = int.Parse(Console.ReadLine());
+        
+        if (quantidade <= 0)
+        {
+            Console.WriteLine("Quantidade inválida.");
+            return;
+        }
+
+        if (quantidade > selecionado.Estoque)
+        {
+            Console.WriteLine("Desculpe, não temos essa quantidade em estoque.");
+        }
+        else
+        {
+            double total = quantidade * selecionado.Preco;
+            Console.WriteLine($"O total da compra é: R${total}");
+            selecionado.Estoque -= quantidade;
+            Console.WriteLine("Compra realizada com sucesso!");
+        }
+
+    }
+    public static void AplicarDesconto()
+    {
+        Console.WriteLine("Digite o nome do produto para aplicar desconto:");
+        string nomebusca = Console.ReadLine();
+
+        foreach (var p in Program.produtos)
+        {
+            if (p.Nome == nomebusca)
+            {
+                Console.WriteLine("Digite a porcentagem de desconto (ex: 10 para 10%):");
+                double desconto = double.Parse(Console.ReadLine());
+
+                p.Preco -= p.Preco * (desconto / 100);
+
+                Console.WriteLine($"Desconto aplicado! Novo preço: {p.Preco}");
+                return;
+            }
+        }
+
+        Console.WriteLine("Produto não encontrado.");
+    }
 }
+#endregion
